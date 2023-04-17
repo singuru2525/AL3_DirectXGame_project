@@ -6,6 +6,7 @@ GameScene::GameScene() {}
 
 GameScene::~GameScene() 
 {
+	delete model_;
 	delete player_;
 }
 
@@ -14,6 +15,12 @@ void GameScene::Initialize() {
 	dxCommon_ = DirectXCommon::GetInstance();
 	input_ = Input::GetInstance();
 	audio_ = Audio::GetInstance();
+
+	textureHandle_ = TextureManager::Load("sample.png");
+
+	model_ = Model::Create();
+
+	viewProjection_.Initialize();
 
 	// 自キャラの生成
 	player_ = new Player();
