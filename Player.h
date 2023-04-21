@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include "Model.h"
+#include "ViewProjection.h"
 #include "WorldTransform.h"
 /// <summary>
 /// 自キャラ
@@ -12,7 +13,7 @@ public:
 	/// </summary>
 	///  <param name="model">モデル</param>
 	///  <param name="textureHandle">テクスチャハンドル</param>
-	void Initialize(Model* model,uint32_t textureHandle);
+	void Initialize(Model* model, uint32_t textureHandle);
 
 	/// <summary>
 	///	更新
