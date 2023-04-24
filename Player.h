@@ -2,6 +2,8 @@
 #include "Model.h"
 #include "ViewProjection.h"
 #include "WorldTransform.h"
+#include "Input.h"
+
 /// <summary>
 /// 自キャラ
 /// </summary>
@@ -32,4 +34,7 @@ private:
 	Model* model_ = nullptr;
 	// テクスチャハンドル
 	uint32_t textureHandle_ = 0u;
+
+	//キーボード入力
+	Input* input_ = nullptr;
 };
