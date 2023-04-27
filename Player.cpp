@@ -1,27 +1,8 @@
 ﻿#include "Player.h"
+#define _USE_MATH_DEFINES
+#include <math.h>
 #include <cassert>
 
-struct Matrix4x4 
-{
-	float m[4][4];
-};
-
-Matrix4x4 Scale(Matrix4x4 matrix1, Matrix4x4 matrix2)
-{
-	Matrix4x4 result;
-	result.m[0][0] = matrix1.m[0][0] * matrix2.m[0][0] +
-	                 matrix1.m[0][1] * matrix2.m[1][0] +
-	                 matrix1.m[0][2] * matrix2.m[2][0] +
-	                 matrix1.m[0][3] * matrix2.m[3][0] ;
-	result.m[0][1] = matrix1.m[0][0] * matrix2.m[0][1] +
-		             matrix1.m[0][1] * matrix2.m[1][1] +
-	                 matrix1.m[0][2] * matrix2.m[2][1] +
-		             matrix1.m[0][3] * matrix2.m[3][1] ;
-	result.m[0][2] = matrix1.m[0][0] * matrix2.m[0][2] +
-		             matrix1.m[0][1] * matrix2.m[1][2] +
-	                 matrix1.m[0][2] * matrix2.m[2][2] + 
-		             matrix1.m[0][3] * matrix2.m[3][2] ;
-}
 
 void Player::Initialize(Model* model, uint32_t textureHandle) { 
 	assert(model);
@@ -58,10 +39,40 @@ void Player::Update() {
 		move.y += kCharacterSpeed;
 	}
 
+	//範囲制限
+	const float kMobeLimitX = 20.0f;
+	const float kMobeLimitY = 20.0f;
+
+	//範囲を超えない処理
+	worldTransform_.translation_.x = max(worldTransform_.translation_.x, -kMobeLimitX);
+	worldTransform_.translation_.x = min(worldTransform_.translation_.x, +kMobeLimitX);
+	worldTransform_.translation_.y = max(worldTransform_.translation_.y, -kMobeLimitY);
+	worldTransform_.translation_.y = min(worldTransform_.translation_.y, +kMobeLimitY);
+
 	// 座標移動
-	worldTransform_.translation_.x = move.x + worldTransform_.translation_.x;
-	worldTransform_.translation_.y = move.y + worldTransform_.translation_.y;
-	worldTransform_.translation_.z = move.z + worldTransform_.translation_.z;
+	worldTransform_.translation_.x += move.x;
+	worldTransform_.translation_.y += move.y;
+	worldTransform_.translation_.z += move.z;
+
+	//行列更新
+	worldTransform_.matWorld_ = MakeAffineMatrix(worldTransform_.scale_, worldTransform_.rotation_, worldTransform_.translation_);
+
+	//行列転送
+	worldTransform_.TransferMatrix();
+
+
+	//ImGui
+	ImGui::SetNextWindowPos({0,0});
+	ImGui::SetNextWindowSize({300, 100});
+
+	ImGui::Begin("Player");
+	float silderValue[3] = {
+	    worldTransform_.translation_.x, worldTransform_.translation_.y,
+	    worldTransform_.translation_.z};
+	ImGui::SliderFloat3("position", silderValue, -20.0f, 20.0f);
+	worldTransform_.translation_ = {silderValue[0], silderValue[1], silderValue[2]};
+	ImGui::End();
+
 
 
 }

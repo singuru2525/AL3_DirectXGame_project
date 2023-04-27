@@ -3,6 +3,8 @@
 #include "ViewProjection.h"
 #include "WorldTransform.h"
 #include "Input.h"
+#include "ImGuiManager.h"
+#include "Matrix4x4.h"
 
 /// <summary>
 /// 自キャラ
