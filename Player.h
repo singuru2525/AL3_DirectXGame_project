@@ -29,6 +29,8 @@ public:
 	/// </summary>
 	void Draw(ViewProjection viewProjection_);
 
+	void Rotate();
+
 private:
 	// ワールド変換データ
 	WorldTransform worldTransform_;
