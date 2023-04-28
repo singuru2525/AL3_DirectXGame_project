@@ -34,9 +34,9 @@ void Player::Update() {
 	}
 	// 押した方向でベクトルを変更 (上下)
 	if (input_->PushKey(DIK_UP)) {
-		move.y -= kCharacterSpeed;
-	} else if (input_->PushKey(DIK_DOWN)) {
 		move.y += kCharacterSpeed;
+	} else if (input_->PushKey(DIK_DOWN)) {
+		move.y -= kCharacterSpeed;
 	}
 
 	//範囲制限
