@@ -18,11 +18,7 @@ void PlayerBullet::Initialize(Model* model, const Vector3& position) {
 void PlayerBullet::Update()
 {
 
-	//行列更新
-	worldTransform_.matWorld_ = MakeAffineMatrix(worldTransform_.scale_, worldTransform_.rotation_, worldTransform_.translation_);
-
-	//行列転送
-	worldTransform_.TransferMatrix();
+	worldTransform_.UpdateMatrix();
 
 }
 

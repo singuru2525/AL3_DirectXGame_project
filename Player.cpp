@@ -54,11 +54,7 @@ void Player::Update() {
 	worldTransform_.translation_.y += move.y;
 	worldTransform_.translation_.z += move.z;
 
-	//行列更新
-	worldTransform_.matWorld_ = MakeAffineMatrix(worldTransform_.scale_, worldTransform_.rotation_, worldTransform_.translation_);
-
-	//行列転送
-	worldTransform_.TransferMatrix();
+	worldTransform_.UpdateMatrix();
 
 
 	//ImGui
