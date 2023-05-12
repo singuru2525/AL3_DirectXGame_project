@@ -7,7 +7,7 @@ void PlayerBullet::Initialize(Model* model, const Vector3& position) {
 	model_ = model;
 
 	// テクスチャ読み込み
-	textureHandle_ = TextureManager::Load("white1x1.png");
+	textureHandle_ = TextureManager::Load("cube/cube.jpg");
 
 	worldTransform_.Initialize();
 

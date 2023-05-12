@@ -74,9 +74,9 @@ void Player::Update() {
 
 	Attack();
 
-	if (bullet_) 
+	for (PlayerBullet* bullet : bullets_) 
 	{
-		bullet_->Update();
+		bullet->Update();
 	}
 }
 
@@ -84,9 +84,9 @@ void Player::Draw(ViewProjection viewProjection_)
 {
 	model_->Draw(worldTransform_, viewProjection_, textureHandle_);
 
-	if (bullet_) 
+	for (PlayerBullet* bullet : bullets_)
 	{
-		bullet_->Draw(viewProjection_);
+		bullet->Draw(viewProjection_);
 	}
 }
 
@@ -109,10 +109,20 @@ void Player::Attack()
 
 	if (input_->TriggerKey(DIK_SPACE)) 
 	{
+		
 		PlayerBullet* newBullet = new PlayerBullet();
 		newBullet->Initialize(model_,worldTransform_.translation_);
 
-		bullet_ = newBullet;
+		bullets_.push_back(newBullet);
+	
 	}
 
+}
+
+Player::~Player() 
+{ 
+	for (PlayerBullet* bullet : bullets_) 
+	{
+		delete bullet;
+	}
 }
