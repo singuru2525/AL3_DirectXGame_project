@@ -5,6 +5,7 @@
 #include "Input.h"
 #include "ImGuiManager.h"
 #include "Matrix4x4.h"
+#include "PlayerBullet.h"
 
 /// <summary>
 /// 自キャラ
@@ -31,6 +32,8 @@ public:
 
 	void Rotate();
 
+	void Attack();
+
 private:
 	// ワールド変換データ
 	WorldTransform worldTransform_;
@@ -41,4 +44,6 @@ private:
 
 	//キーボード入力
 	Input* input_ = nullptr;
+
+	PlayerBullet* bullet_ = nullptr;
 };

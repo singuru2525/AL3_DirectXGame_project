@@ -40,8 +40,8 @@ void Player::Update() {
 	}
 
 	//範囲制限
-	const float kMobeLimitX = 20.0f;
-	const float kMobeLimitY = 20.0f;
+	const float kMobeLimitX = 35.0f;
+	const float kMobeLimitY = 35.0f;
 
 	//範囲を超えない処理
 	worldTransform_.translation_.x = max(worldTransform_.translation_.x, -kMobeLimitX);
@@ -74,12 +74,24 @@ void Player::Update() {
 	ImGui::End();
 
 
+	Rotate();
 
+	Attack();
+
+	if (bullet_) 
+	{
+		bullet_->Update();
+	}
 }
 
 void Player::Draw(ViewProjection viewProjection_) 
 {
 	model_->Draw(worldTransform_, viewProjection_, textureHandle_);
+
+	if (bullet_) 
+	{
+		bullet_->Draw(viewProjection_);
+	}
 }
 
 void Player::Rotate() 
@@ -89,9 +101,22 @@ void Player::Rotate()
 	// 押した方向で移動ベクトルを変更
 	if (input_->PushKey(DIK_A)) 
 	{
-		worldTransform_.translation_.y -= kRotSpeed; 
+		worldTransform_.rotation_.y += kRotSpeed; 
 	} else if (input_->PushKey(DIK_D)) 
 	{
-		worldTransform_.translation_.y += kRotSpeed; 
+		worldTransform_.rotation_.y -= kRotSpeed; 
 	}
+}
+
+void Player::Attack() 
+{
+
+	if (input_->TriggerKey(DIK_SPACE)) 
+	{
+		PlayerBullet* newBullet = new PlayerBullet();
+		newBullet->Initialize(model_,worldTransform_.translation_);
+
+		bullet_ = newBullet;
+	}
+
 }
