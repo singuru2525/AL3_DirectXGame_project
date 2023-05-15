@@ -6,6 +6,7 @@
 #include "ImGuiManager.h"
 #include "Matrix4x4.h"
 #include "PlayerBullet.h"
+#include "MathUtility.h"
 #include <list>
 
 
