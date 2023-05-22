@@ -1,4 +1,6 @@
 ﻿#include "Enemy.h"
+#define _USE_MATH_DEFINES
+#include <math.h>
 #include <cassert>
 
 void Enemy::Initialize(Model* model, const Vector3& position, const Vector3& Velocity) {
@@ -15,14 +17,24 @@ void Enemy::Initialize(Model* model, const Vector3& position, const Vector3& Vel
 
 	// 引数で受け取った初期値をセット
 	worldTransform_.translation_ = position;
+
+	// 接近フェーズの初期化呼び出し
+	ApproachInitialize();
+
 }
 
 void Enemy::Update() 
 {
 
-	worldTransform_.translation_.x += velocity_.x;
-	worldTransform_.translation_.y += velocity_.y;
-	worldTransform_.translation_.z += velocity_.z;
+	bullets_.remove_if([](EnemyBullet* bullet) 
+	{
+		if (bullet->IsDead())
+		{
+			delete bullet;
+			return true;
+		}
+		return false;
+	});
 
 	switch (phase_) {
 	case Phase::Approach:
@@ -40,6 +52,14 @@ void Enemy::Update()
 		break;
 	}
 
+
+
+	// 弾の更新呼び出し
+	for (EnemyBullet* bullet : bullets_) 
+	{
+		bullet->Update();
+	}
+
 	worldTransform_.UpdateMatrix();
 
 }
@@ -47,18 +67,65 @@ void Enemy::Update()
 void Enemy::Draw(const ViewProjection& viewProjection) {
 
 	model_->Draw(worldTransform_, viewProjection, textureHandle_);
+
+	// 弾の描画呼び出し
+	for (EnemyBullet* bullet : bullets_)
+	{
+		bullet->Draw(viewProjection);
+	}
 }
 
+// 敵の接近
 void Enemy::EnemyApproach() 
 {
-	float approachSpeed = 0.2f;
-	worldTransform_.translation_.z += approachSpeed;
-}
+	float approachSpeed = 0.4f;
+	worldTransform_.translation_.z -= approachSpeed;
 
+	--fireTimer_; 
+
+	if (fireTimer_ <= 0) 
+	{
+		// 弾を発射
+		Fire();
+		// 発射タイマーを初期化
+		fireTimer_ = kFireInterval;
+	}
+}
+ 
+// 敵の離脱
 void Enemy::EnemyLeave() 
 {
 	float leaveSpeed = 0.2f;
 	worldTransform_.translation_.x += leaveSpeed;
-	worldTransform_.translation_.y += leaveSpeed;
-	worldTransform_.translation_.z += leaveSpeed;
+}
+
+// 接近フェーズの初期化
+void Enemy::ApproachInitialize() 
+{
+	// 発射タイマーを初期化
+	fireTimer_ = kFireInterval;
+}
+
+// 弾の発射関数
+void Enemy::Fire() 
+{
+	const float kBulletSpeed = 1.0f;
+	Vector3 velocity(0, 0, kBulletSpeed);
+
+	velocity = TransformNormal(velocity, worldTransform_.matWorld_);
+
+	EnemyBullet* newBullet = new EnemyBullet();
+	newBullet->Initialize(model_, worldTransform_.translation_, velocity);
+
+	bullets_.push_back(newBullet);
+
+}
+
+// デストラクタ
+Enemy::~Enemy()
+{
+	for (EnemyBullet* bullet : bullets_)
+	{
+		delete bullet;
+	}
 }

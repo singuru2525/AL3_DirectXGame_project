@@ -3,22 +3,13 @@
 #include "Vector3.h"
 #include "ViewProjection.h"
 #include "WorldTransform.h"
-#include "MathUtility.h"
-#include <list>
-#include "EnemyBullet.h"
-
-enum class Phase {
-	Approach, // 接近する
-	Leave,    // 離脱する
-};
 
 /// <summary>
-/// 敵
+/// 敵の弾
 /// </summary>
-class Enemy {
+class EnemyBullet {
 
 public:
-
 	/// <summary>
 	/// 初期化
 	/// </summary>
@@ -38,27 +29,11 @@ public:
 	/// <param name="viewProjection"></param>
 	void Draw(const ViewProjection& viewProjection);
 
-	// 接近関数
-	void EnemyApproach();
-
-	// 離脱関数
-	void EnemyLeave();
-
 	/// <summary>
-	/// 弾発射
+	/// 弾の消失
 	/// </summary>
-	void Fire();
-
-	/// <summary>
-	/// デストラクタ
-	/// </summary>
-	~Enemy();
-
-	// 発射間隔
-	static const int kFireInterval = 60;
-
-	// 接近フェーズ初期化
-	void ApproachInitialize();
+	/// <returns></returns>
+	bool IsDead() const { return isDead_; }
 
 private:
 
@@ -74,13 +49,14 @@ private:
 	// 速度
 	Vector3 velocity_;
 
-	// フェーズ
-	Phase phase_ = Phase::Approach;
+	// 寿命
+	static const int32_t kLifeTime = 60 * 5;
 
-	// 弾のリスト
-	std::list<EnemyBullet*> bullets_;
+	// デスタイマー
+	int32_t deathTimer_ = kLifeTime;
 
-	// 発射タイマー
-	int32_t fireTimer_;
+	// デスフラグ
+	bool isDead_ = false;
+
 
 };
