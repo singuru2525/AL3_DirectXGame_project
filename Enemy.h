@@ -4,6 +4,11 @@
 #include "ViewProjection.h"
 #include "WorldTransform.h"
 
+enum class Phase {
+	Approach, // 接近する
+	Leave,    // 離脱する
+};
+
 /// <summary>
 /// 敵
 /// </summary>
@@ -30,6 +35,12 @@ public:
 	/// <param name="viewProjection"></param>
 	void Draw(const ViewProjection& viewProjection);
 
+	// 接近関数
+	void EnemyApproach();
+
+	// 離脱関数
+	void EnemyLeave();
+
 private:
 
 	// ワールド変換データ
@@ -44,5 +55,7 @@ private:
 	// 速度
 	Vector3 velocity_;
 
+	// フェーズ
+	Phase phase_ = Phase::Approach;
 
 };
