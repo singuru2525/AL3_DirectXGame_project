@@ -1,6 +1,8 @@
 ﻿#include "Enemy.h"
+#include "Player.h"
 #define _USE_MATH_DEFINES
 #include <math.h>
+#include <cmath>
 #include <cassert>
 
 void Enemy::Initialize(Model* model, const Vector3& position, const Vector3& Velocity) {
@@ -109,10 +111,23 @@ void Enemy::ApproachInitialize()
 // 弾の発射関数
 void Enemy::Fire() 
 {
-	const float kBulletSpeed = 1.0f;
-	Vector3 velocity(0, 0, kBulletSpeed);
 
-	velocity = TransformNormal(velocity, worldTransform_.matWorld_);
+	assert(player_);
+	
+	const float kBulletSpeed = 1.0f;
+
+	player_->GetWorldPosition();
+	GetWorldPosition();
+
+	Vector3 vec{
+	    player_->GetWorldPosition().x - GetWorldPosition().x,
+	    player_->GetWorldPosition().y - GetWorldPosition().y,
+	    player_->GetWorldPosition().z - GetWorldPosition().z,
+	};
+	float length = sqrt(vec.x * vec.x + vec.y * vec.y + vec.z * vec.z);
+
+	Vector3 dir = {vec.x / length, vec.y / length, vec.z / length};
+	Vector3 velocity = {dir.x * kBulletSpeed, dir.y * kBulletSpeed, dir.z * kBulletSpeed};
 
 	EnemyBullet* newBullet = new EnemyBullet();
 	newBullet->Initialize(model_, worldTransform_.translation_, velocity);
@@ -120,6 +135,19 @@ void Enemy::Fire()
 	bullets_.push_back(newBullet);
 
 }
+
+
+Vector3 Enemy::GetWorldPosition() {
+
+	Vector3 worldPos;
+
+	worldPos.x = worldTransform_.translation_.x;
+	worldPos.y = worldTransform_.translation_.y;
+	worldPos.z = worldTransform_.translation_.z;
+
+	return worldPos;
+}
+
 
 // デストラクタ
 Enemy::~Enemy()

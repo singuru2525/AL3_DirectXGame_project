@@ -12,6 +12,8 @@ enum class Phase {
 	Leave,    // 離脱する
 };
 
+class Player;
+
 /// <summary>
 /// 敵
 /// </summary>
@@ -26,6 +28,10 @@ public:
 	/// <param name="position"></param>
 	/// <param name="Velocity"></param>
 	void Initialize(Model* model, const Vector3& position, const Vector3& Velocity);
+
+
+	void SetPlayer(Player* player) { player_ = player; }
+
 
 	/// <summary>
 	/// 更新
@@ -49,13 +55,15 @@ public:
 	/// </summary>
 	void Fire();
 
+	Vector3 GetWorldPosition();
+
 	/// <summary>
 	/// デストラクタ
 	/// </summary>
 	~Enemy();
 
 	// 発射間隔
-	static const int kFireInterval = 60;
+	static const int kFireInterval = 30;
 
 	// 接近フェーズ初期化
 	void ApproachInitialize();
@@ -82,5 +90,7 @@ private:
 
 	// 発射タイマー
 	int32_t fireTimer_;
+
+	Player* player_ = nullptr;
 
 };

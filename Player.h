@@ -37,10 +37,14 @@ public:
 
 	void Attack();
 
+	Vector3 GetWorldPosition();
+
 	/// <summary>
 	/// デストラクタ
 	/// </summary>
 	~Player();
+
+	
 
 private:
 	// ワールド変換データ
