@@ -148,6 +148,8 @@ Vector3 Enemy::GetWorldPosition() {
 	return worldPos;
 }
 
+void Enemy::OnCollision() {}
+
 
 // デストラクタ
 Enemy::~Enemy()

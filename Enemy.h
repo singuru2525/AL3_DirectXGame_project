@@ -55,6 +55,7 @@ public:
 	/// </summary>
 	void Fire();
 
+	// Getter
 	Vector3 GetWorldPosition();
 
 	/// <summary>
@@ -67,6 +68,16 @@ public:
 
 	// 接近フェーズ初期化
 	void ApproachInitialize();
+
+	// 衝突を検知したら呼び出されるコールバック関数
+	void OnCollision();
+
+	const float radius_ = 1.0f;
+
+	const float GetRadius() { return radius_; }
+
+		// 弾リストを取得
+	const std::list<EnemyBullet*>& GetBullet() { return bullets_; }
 
 private:
 

@@ -148,6 +148,7 @@ Vector3 Player::GetWorldPosition()
 
 }
 
+
 Player::~Player() 
 { 
 	for (PlayerBullet* bullet : bullets_) 
@@ -155,3 +156,5 @@ Player::~Player()
 		delete bullet;
 	}
 }
+
+void Player::OnCollision() {}

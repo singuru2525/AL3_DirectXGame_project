@@ -31,6 +31,18 @@ public:
 
 	bool IsDead() const { return isDead_; }
 
+	// Getter
+	Vector3 GetWorldPosition();
+
+
+	// 衝突を検知したら呼び出されるコールバック関数
+	void OnCollision();
+
+	const float radius_ = 1.0f;
+
+	const float GetRadius() { return radius_; }
+
+
 private:
 
 	// ワールド変換データ

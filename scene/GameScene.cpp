@@ -53,7 +53,7 @@ void GameScene::Update()
 	// 自キャラの更新
 	player_->Update();
 
-	
+	CheckAllCollisions();
 
 	if (enemy_) 
 	{
@@ -136,4 +136,82 @@ void GameScene::Draw() {
 	Sprite::PostDraw();
 
 #pragma endregion
+}
+
+void GameScene::CheckAllCollisions() 
+{ 
+	Vector3 posA, posB;
+
+	const std::list<PlayerBullet*>& playerBullets = player_->GetBullet();
+
+	const std::list<EnemyBullet*>& enemyBullets = enemy_->GetBullet();
+
+	#pragma region 自キャラと敵弾の当たり判定
+
+	posA = player_->GetWorldPosition();
+
+	for (EnemyBullet* bullet : enemyBullets) 
+	{
+		posB = bullet->GetWorldPosition();
+
+		float ball = (posB.x - posA.x) * (posB.x - posA.x) +
+		               (posB.y - posA.y) * (posB.y - posA.y) +
+		               (posB.z - posA.z) * (posB.z - posA.z);
+
+		if (ball <= (bullet->radius_ + player_->radius_) * (bullet->radius_ + player_->radius_))
+		{
+			 player_->OnCollision();
+
+			 bullet->OnCollision();
+		}
+
+	}
+
+	#pragma endregion
+
+	#pragma region 自弾と敵キャラの当たり判定
+
+	posA = enemy_->GetWorldPosition();
+
+	for (PlayerBullet* bullet : playerBullets) {
+		posB = bullet->GetWorldPosition();
+
+
+		float ball = (posB.x - posA.x) * (posB.x - posA.x) +
+		             (posB.y - posA.y) * (posB.y - posA.y) +
+		             (posB.z - posA.z) * (posB.z - posA.z);
+
+		if (ball <= (bullet->radius_ + enemy_->radius_) * (bullet->radius_ + enemy_->radius_))
+		{
+			 enemy_->OnCollision();
+
+			 bullet->OnCollision();
+		}
+	}
+
+	#pragma endregion
+
+	#pragma region 自弾と敵弾の当たり判定
+
+	for (PlayerBullet* bullets : playerBullets) 
+	{
+		posA = bullets->GetWorldPosition();
+
+		for (EnemyBullet* bullet : enemyBullets) 
+		{
+			 posB = bullet->GetWorldPosition();
+
+			 float ball = (posB.x - posA.x) * (posB.x - posA.x) +
+			              (posB.y - posA.y) * (posB.y - posA.y) +
+			              (posB.z - posA.z) * (posB.z - posA.z);
+
+			 if (ball <= (bullet->radius_ + bullets->radius_) * (bullet->radius_ + bullets->radius_)) {
+				 bullets->OnCollision();
+
+				 bullet->OnCollision();
+			 }
+		}
+	}
+
+	#pragma endregion
 }
