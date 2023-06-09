@@ -12,6 +12,7 @@ GameScene::~GameScene()
 	delete player_;
 	delete debugCamera_;
 	delete enemy_;
+	delete skydome_;
 }
 
 void GameScene::Initialize() {
@@ -39,6 +40,13 @@ void GameScene::Initialize() {
 	// 敵キャラに自キャラのアドレスをわたす
 	enemy_->SetPlayer(player_);
 
+	// 天球
+	skydome_ = new Skydome();
+
+	modelSkydome_ = Model::CreateFromOBJ("skydome", true);
+
+	skydome_->Initialize(modelSkydome_);
+
 	//デバックカメラの生成
 	debugCamera_ = new DebugCamera(WinApp::kWindowWidth, WinApp::kWindowHeight);
 
@@ -61,15 +69,17 @@ void GameScene::Update()
 		enemy_->Update();
 	}
 
+	skydome_->Update();
+
 	//デバックカメラの更新
 	debugCamera_->Update();
 
 	// 0を入力するとデバックカメラが動く
-#ifdef _DEBUG
+//#ifdef _DEBUG
 	if (input_->TriggerKey(DIK_0)) {
 		isDebugCameraActive_ = 1;
 	}
-#endif // _DEBUG
+//#endif // _DEBUG
 
 	// カメラの処理
 	if (isDebugCameraActive_) {
@@ -113,6 +123,8 @@ void GameScene::Draw() {
 	/// 
 	// 自キャラの描画
 	player_->Draw(viewProjection_);
+
+	skydome_->Draw(viewProjection_);
 
 	if (enemy_) 
 	{

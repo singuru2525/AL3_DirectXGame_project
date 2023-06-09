@@ -12,6 +12,7 @@
 #include "DebugCamera.h"
 #include "Enemy.h"
 #include "Vector3.h"
+#include "Skydome.h"
 
 /// <summary>
 /// ゲームシーン
@@ -78,4 +79,9 @@ private: // メンバ変数
 
 	// 敵
 	Enemy* enemy_ = nullptr;
+
+	// 天球
+	Skydome* skydome_ = nullptr;
+
+	Model* modelSkydome_ = nullptr;
 };
