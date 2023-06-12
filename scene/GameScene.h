@@ -13,6 +13,7 @@
 #include "Enemy.h"
 #include "Vector3.h"
 #include "Skydome.h"
+#include "RailCamera.h"
 
 /// <summary>
 /// ゲームシーン
@@ -50,6 +51,7 @@ public: // メンバ関数
 	/// </summary>
 	void CheckAllCollisions();
 
+
 private: // メンバ変数
 	DirectXCommon* dxCommon_ = nullptr;
 	Input* input_ = nullptr;
@@ -59,6 +61,9 @@ private: // メンバ変数
 	/// ゲームシーン用
 	/// </summary>
 	
+	// ワールド変換データ
+	WorldTransform worldTransform_;
+
 	// テクスチャハンドル
 	uint32_t textureHandle_ = 0;
 
@@ -84,4 +89,7 @@ private: // メンバ変数
 	Skydome* skydome_ = nullptr;
 
 	Model* modelSkydome_ = nullptr;
+
+	// レールカメラ
+	RailCamera* railCamera_ = nullptr;
 };

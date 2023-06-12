@@ -21,7 +21,7 @@ public:
 	/// </summary>
 	///  <param name="model">モデル</param>
 	///  <param name="textureHandle">テクスチャハンドル</param>
-	void Initialize(Model* model, uint32_t textureHandle);
+	void Initialize(Model* model, uint32_t textureHandle, Vector3 playerPosition);
 
 	/// <summary>
 	///	更新
@@ -55,6 +55,12 @@ public:
 	// 衝突を検知したら呼び出されるコールバック関数
 	void OnCollision();
 
+	/// <summary>
+	/// 親となるワールドトランスフォームをセット
+	/// </summary>
+	/// <param name="parent">親となるワールドトランスフォーム</param>
+	void SetParent(const WorldTransform* parent);
+
 private:
 	// ワールド変換データ
 	WorldTransform worldTransform_;
@@ -68,5 +74,7 @@ private:
 
 	std::list<PlayerBullet*> bullets_;// 弾のリスト
 
-	
+	// 初期位置
+	Vector3 playerPosition_{};
+
 };

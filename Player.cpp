@@ -4,12 +4,14 @@
 #include <cassert>
 
 
-void Player::Initialize(Model* model, uint32_t textureHandle) { 
+void Player::Initialize(Model* model, uint32_t textureHandle, Vector3 playerPosition) { 
 	assert(model);
 
 	model_ = model;
 
 	textureHandle_ = textureHandle;
+
+	worldTransform_.translation_ = playerPosition;
 
 	worldTransform_.Initialize();
 
@@ -105,7 +107,7 @@ void Player::Rotate()
 {
 	const float kRotSpeed = 0.02f;
 
-	// 押した方向で移動ベクトルを変更
+	// 押した方向で回転ベクトルを変更
 	if (input_->PushKey(DIK_A)) 
 	{
 		worldTransform_.rotation_.y += kRotSpeed; 
@@ -127,7 +129,7 @@ void Player::Attack()
 		velocity = TransformNormal(velocity, worldTransform_.matWorld_);
 
 		PlayerBullet* newBullet = new PlayerBullet();
-		newBullet->Initialize(model_,worldTransform_.translation_,velocity);
+		newBullet->Initialize(model_, GetWorldPosition(), velocity);
 
 		bullets_.push_back(newBullet);
 	
@@ -140,9 +142,9 @@ Vector3 Player::GetWorldPosition()
 
 	Vector3 worldPos;
 
-	worldPos.x = worldTransform_.translation_.x;
-	worldPos.y = worldTransform_.translation_.y;
-	worldPos.z = worldTransform_.translation_.z;
+	worldPos.x = worldTransform_.matWorld_.m[3][0];
+	worldPos.y = worldTransform_.matWorld_.m[3][1];
+	worldPos.z = worldTransform_.matWorld_.m[3][2];
 
 	return worldPos;
 
@@ -158,3 +160,8 @@ Player::~Player()
 }
 
 void Player::OnCollision() {}
+
+void Player::SetParent(const WorldTransform* parent) 
+{
+	worldTransform_.parent_ = parent; 
+}
