@@ -1,5 +1,6 @@
 ﻿#include "Enemy.h"
 #include "Player.h"
+#include "GameScene.h"
 #define _USE_MATH_DEFINES
 #include <math.h>
 #include <cmath>
@@ -28,22 +29,14 @@ void Enemy::Initialize(Model* model, const Vector3& position, const Vector3& Vel
 void Enemy::Update() 
 {
 
-	bullets_.remove_if([](EnemyBullet* bullet) 
-	{
-		if (bullet->IsDead())
-		{
-			delete bullet;
-			return true;
-		}
-		return false;
-	});
+	
 
 	switch (phase_) {
 	case Phase::Approach:
 		// 移動
 		EnemyApproach();
 		// 規定の位置に到達したら離脱
-		if (worldTransform_.translation_.z < 0.0f) {
+		if (worldTransform_.translation_.z < 30.0f) {
 			phase_ = Phase::Leave;
 		}
 		break;
@@ -56,12 +49,7 @@ void Enemy::Update()
 
 
 
-	// 弾の更新呼び出し
-	for (EnemyBullet* bullet : bullets_) 
-	{
-		bullet->Update();
-	}
-
+	
 	worldTransform_.UpdateMatrix();
 
 }
@@ -70,17 +58,12 @@ void Enemy::Draw(const ViewProjection& viewProjection) {
 
 	model_->Draw(worldTransform_, viewProjection, textureHandle_);
 
-	// 弾の描画呼び出し
-	for (EnemyBullet* bullet : bullets_)
-	{
-		bullet->Draw(viewProjection);
-	}
 }
 
 // 敵の接近
 void Enemy::EnemyApproach() 
 {
-	float approachSpeed = 0.4f;
+	float approachSpeed = 0.2f;
 	worldTransform_.translation_.z -= approachSpeed;
 
 	--fireTimer_; 
@@ -99,6 +82,7 @@ void Enemy::EnemyLeave()
 {
 	float leaveSpeed = 0.2f;
 	worldTransform_.translation_.x += leaveSpeed;
+
 }
 
 // 接近フェーズの初期化
@@ -132,7 +116,7 @@ void Enemy::Fire()
 	EnemyBullet* newBullet = new EnemyBullet();
 	newBullet->Initialize(model_, worldTransform_.translation_, velocity);
 
-	bullets_.push_back(newBullet);
+	gameScene_->AddEnemyBullet(newBullet);
 
 }
 
@@ -154,8 +138,5 @@ void Enemy::OnCollision() {}
 // デストラクタ
 Enemy::~Enemy()
 {
-	for (EnemyBullet* bullet : bullets_)
-	{
-		delete bullet;
-	}
+	
 }

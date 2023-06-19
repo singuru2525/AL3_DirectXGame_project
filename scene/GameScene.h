@@ -14,6 +14,7 @@
 #include "Vector3.h"
 #include "Skydome.h"
 #include "RailCamera.h"
+#include <sstream>
 
 /// <summary>
 /// ゲームシーン
@@ -51,6 +52,32 @@ public: // メンバ関数
 	/// </summary>
 	void CheckAllCollisions();
 
+	// 弾リストを取得
+	const std::list<EnemyBullet*>& GetBullet() { return bullets_; }
+
+	/// <summary>
+	/// 敵弾を追加
+	/// </summary>
+	/// <param name="enemyBullet"></param>
+	void AddEnemyBullet(EnemyBullet* enemyBullet);
+
+
+	/// <summary>
+	/// 敵を追加
+	/// </summary>
+	/// <param name="pos"></param>
+	void AddEnemy(Vector3 pos);
+
+	/// <summary>
+	/// 敵発生データの読み込み
+	/// </summary>
+	void LoadEnemyPopData();
+
+	/// <summary>
+	/// 敵発生コマンドの更新
+	/// </summary>
+	void UpdateEnemyPopCommands();
+
 
 private: // メンバ変数
 	DirectXCommon* dxCommon_ = nullptr;
@@ -83,7 +110,7 @@ private: // メンバ変数
 	DebugCamera* debugCamera_ = nullptr;
 
 	// 敵
-	Enemy* enemy_ = nullptr;
+	std::list<Enemy*> enemy_;
 
 	// 天球
 	Skydome* skydome_ = nullptr;
@@ -92,4 +119,14 @@ private: // メンバ変数
 
 	// レールカメラ
 	RailCamera* railCamera_ = nullptr;
+
+	// 弾のリスト
+	std::list<EnemyBullet*> bullets_;
+
+	std::stringstream enemyPopCommands;
+
+	bool waitFlag_ = false;
+
+	int waitTime_;
+
 };

@@ -16,7 +16,7 @@ void RailCamera::Initialize(Vector3& trans, Vector3& rot)
 void RailCamera::Update() 
 { 
 	Vector3 move = {0.f, 0.f, 0.f};
-	Vector3 rot = {0.f, 0.001f, 0.f};
+	Vector3 rot = {0.f, 0.000f, 0.f};
 
 	worldTransform_.translation_.x += move.x;
 	worldTransform_.translation_.y += move.y;

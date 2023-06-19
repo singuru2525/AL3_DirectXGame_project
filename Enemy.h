@@ -14,6 +14,8 @@ enum class Phase {
 
 class Player;
 
+class GameScene;
+
 /// <summary>
 /// 敵
 /// </summary>
@@ -76,8 +78,7 @@ public:
 
 	const float GetRadius() { return radius_; }
 
-		// 弾リストを取得
-	const std::list<EnemyBullet*>& GetBullet() { return bullets_; }
+	void SetGameScene(GameScene* gameScene) { gameScene_ = gameScene; }
 
 private:
 
@@ -96,12 +97,14 @@ private:
 	// フェーズ
 	Phase phase_ = Phase::Approach;
 
-	// 弾のリスト
+		// 弾のリスト
 	std::list<EnemyBullet*> bullets_;
 
 	// 発射タイマー
 	int32_t fireTimer_;
 
 	Player* player_ = nullptr;
+
+	GameScene* gameScene_ = nullptr;
 
 };
