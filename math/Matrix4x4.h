@@ -19,8 +19,19 @@ Matrix4x4 MakeTransMatrix(const Vector3& trans);
 
 Matrix4x4 MakeAffineMatrix(const Vector3& scale, const Vector3& rot, const Vector3& translate);
 
+// 正規化
+Vector3 Normalize(const Vector3& v);
+
+float Length(Vector3 v);
+
 // 代入演算子
 Matrix4x4& operator*=(Matrix4x4& m1, const Matrix4x4& m2);
 
 // 二項演算子
 Matrix4x4 operator*(const Matrix4x4& m1, const Matrix4x4& m2);
+
+
+Vector3& operator*=(Vector3& v, float s);
+
+
+const Vector3& operator*(const Vector3& v, float s);

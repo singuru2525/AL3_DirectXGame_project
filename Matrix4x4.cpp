@@ -73,6 +73,28 @@ Matrix4x4 MakeAffineMatrix(const Vector3& scale, const Vector3& rot, const Vecto
 	return result;
 }
 
+
+// 正規化
+Vector3 Normalize(const Vector3& v) 
+{
+	Vector3 resultNormalize;
+	float length = sqrt(v.x * v.x + v.y * v.y + v.z * v.z);
+	resultNormalize.x = v.x / length;
+	resultNormalize.y = v.y / length;
+	resultNormalize.z = v.z / length;
+
+	return resultNormalize;
+}
+
+
+// 長さ
+float Length(const Vector3& v) 
+{
+	float resultLength = sqrt(v.x * v.x + v.y * v.y + v.z * v.z);
+	return resultLength;
+}
+
+
 // 代入演算子
 Matrix4x4& operator*=(Matrix4x4& m1, const Matrix4x4& m2) {
 	Matrix4x4 result = {};
@@ -94,4 +116,20 @@ Matrix4x4 operator*(const Matrix4x4& m1, const Matrix4x4& m2)
 	Matrix4x4 result = m1;
 
 	return result *= m2;
+}
+
+
+Vector3& operator*=(Vector3& v, float s)
+{
+	v.x *= s;
+	v.y *= s;
+	v.z *= s;
+
+	return v;
+}
+
+const Vector3& operator*(const Vector3& v, float s)
+{
+	Vector3 tmp(v);
+	return tmp *= s;
 }

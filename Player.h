@@ -77,4 +77,6 @@ private:
 	// 初期位置
 	Vector3 playerPosition_{};
 
+	WorldTransform worldTransform3DReticle_;
+
 };

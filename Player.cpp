@@ -15,6 +15,8 @@ void Player::Initialize(Model* model, uint32_t textureHandle, Vector3 playerPosi
 
 	worldTransform_.Initialize();
 
+	worldTransform3DReticle_.Initialize();
+
 	//シングルトンインスタンスを取得する
 	input_ = Input::GetInstance();
 }
@@ -32,6 +34,21 @@ void Player::Update() {
 	});
 
 	worldTransform_.TransferMatrix();
+
+	// 自機から3Dレティクルへの距離
+	const float kDistancePlayerTo3DReticle = 50.0f;
+	// 自機から3Dレティクルへのオフセット(Z+向き)
+	Vector3 offset = {0, 0, 1.0f};
+	// 自機のワールド行列の回転を反映
+	offset = TransformNormal(offset, worldTransform_.matWorld_);
+	// ベクトルの長さを整える
+	offset = Normalize(offset) * kDistancePlayerTo3DReticle;
+	// 3dレティクルの座標を設定
+	worldTransform3DReticle_.translation_.x = GetWorldPosition().x + offset.x;
+	worldTransform3DReticle_.translation_.y = GetWorldPosition().y + offset.y;
+	worldTransform3DReticle_.translation_.z = GetWorldPosition().z + offset.z;
+	worldTransform3DReticle_.UpdateMatrix();
+
 
 	// キャラクターの移動ベクトル
 	Vector3 move = {0, 0, 0};
@@ -101,6 +118,8 @@ void Player::Draw(ViewProjection viewProjection_)
 	{
 		bullet->Draw(viewProjection_);
 	}
+
+	model_->Draw(worldTransform3DReticle_, viewProjection_);
 }
 
 void Player::Rotate() 
