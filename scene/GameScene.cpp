@@ -29,6 +29,7 @@ void GameScene::Initialize() {
 	audio_ = Audio::GetInstance();
 
 	textureHandle_ = TextureManager::Load("sample.png");
+	TextureManager::Load("target.png");
 
 	model_ = Model::Create();
 
@@ -76,7 +77,7 @@ void GameScene::Initialize() {
 void GameScene::Update() 
 {
 	// 自キャラの更新
-	player_->Update();
+	player_->Update(viewProjection_);
 
 	// 敵の更新
 	for (Enemy* enemy : enemy_) {
@@ -178,9 +179,11 @@ void GameScene::Draw() {
 #pragma endregion
 
 #pragma region 前景スプライト描画
+
 	// 前景スプライト描画前処理
 	Sprite::PreDraw(commandList);
 
+	player_->DrawUI();
 	/// <summary>
 	/// ここに前景スプライトの描画処理を追加できる
 	/// </summary>

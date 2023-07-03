@@ -7,6 +7,7 @@
 #include "Matrix4x4.h"
 #include "PlayerBullet.h"
 #include "MathUtility.h"
+#include "Sprite.h"
 #include <list>
 
 
@@ -26,12 +27,12 @@ public:
 	/// <summary>
 	///	更新
 	/// </summary>
-	void Update();
+	void Update(ViewProjection &viewProjection);
 	
 	/// /// <summary>
 	///	描画
 	/// </summary>
-	void Draw(ViewProjection viewProjection_);
+	void Draw(ViewProjection &viewProjection);
 
 	void Rotate();
 
@@ -61,6 +62,12 @@ public:
 	/// <param name="parent">親となるワールドトランスフォーム</param>
 	void SetParent(const WorldTransform* parent);
 
+
+	/// <summary>
+	/// UI描画
+	/// </summary>
+	void DrawUI();
+
 private:
 	// ワールド変換データ
 	WorldTransform worldTransform_;
@@ -78,5 +85,10 @@ private:
 	Vector3 playerPosition_{};
 
 	WorldTransform worldTransform3DReticle_;
+
+	Sprite* sprite2DReticle_ = nullptr;
+
+	// ビュープロジェクション
+	ViewProjection viewProjection_;
 
 };

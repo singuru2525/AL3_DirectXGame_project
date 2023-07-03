@@ -17,11 +17,22 @@ void Player::Initialize(Model* model, uint32_t textureHandle, Vector3 playerPosi
 
 	worldTransform3DReticle_.Initialize();
 
+	// レティクル用テクスチャ取得
+	uint32_t textureReticle = TextureManager::Load("target.png");
+
+	// スプライト生成
+	sprite2DReticle_ = Sprite::Create(
+	    textureReticle,
+	    {640,360},
+	    {1, 1, 1, 1},
+		{0.5f, 0.5f});
+
 	//シングルトンインスタンスを取得する
 	input_ = Input::GetInstance();
 }
 
-void Player::Update() {
+void Player::Update(ViewProjection &viewProjection)
+{
 
 	bullets_.remove_if([](PlayerBullet* bullet) {
 
@@ -43,11 +54,40 @@ void Player::Update() {
 	offset = TransformNormal(offset, worldTransform_.matWorld_);
 	// ベクトルの長さを整える
 	offset = Normalize(offset) * kDistancePlayerTo3DReticle;
-	// 3dレティクルの座標を設定
+	// 3Dレティクルの座標を設定
 	worldTransform3DReticle_.translation_.x = GetWorldPosition().x + offset.x;
 	worldTransform3DReticle_.translation_.y = GetWorldPosition().y + offset.y;
 	worldTransform3DReticle_.translation_.z = GetWorldPosition().z + offset.z;
 	worldTransform3DReticle_.UpdateMatrix();
+
+
+	// 3Dレティクルのワールド座標から2Dレティクルのスクリーン座標を計算	
+	Vector3 positionReticle = worldTransform3DReticle_.translation_;
+
+	// ビューポート行列
+	Matrix4x4 matViewport = 
+		MakeViewportMatrix(0, 0, WinApp::kWindowWidth, WinApp::kWindowHeight, 0, 1);
+
+	// ビュー行列とプロジェクション行列、ビューポート行列を合成する
+	Matrix4x4 matViewProjectionViewport =
+	    viewProjection.matView * viewProjection.matProjection * matViewport;
+
+	// ワールド->スクリーン座標変換 (ここで3Dから2Dになる)
+	positionReticle = Transform(positionReticle, matViewProjectionViewport);
+
+	// スプライトのレティクルに座標変換
+	sprite2DReticle_->SetPosition(Vector2(positionReticle.x, positionReticle.y));
+
+	// マウス座標
+	POINT mousePosition;
+
+	GetCursorPos(&mousePosition);
+
+	HWND hwnd = WinApp::GetInstance()->GetHwnd();
+	ScreenToClient(hwnd, &mousePosition);
+
+	sprite2DReticle_->SetPosition(Vector2(float(mousePosition.x),float (mousePosition.y)));
+
 
 
 	// キャラクターの移動ベクトル
@@ -110,16 +150,18 @@ void Player::Update() {
 	}
 }
 
-void Player::Draw(ViewProjection viewProjection_) 
+void Player::Draw(ViewProjection &viewProjection) 
 {
-	model_->Draw(worldTransform_, viewProjection_, textureHandle_);
+	// プレイヤー
+	model_->Draw(worldTransform_, viewProjection, textureHandle_);
 
 	for (PlayerBullet* bullet : bullets_)
 	{
-		bullet->Draw(viewProjection_);
+		bullet->Draw(viewProjection);
 	}
 
-	model_->Draw(worldTransform3DReticle_, viewProjection_);
+	// 3Dレティクル
+	model_->Draw(worldTransform3DReticle_, viewProjection);
 }
 
 void Player::Rotate() 
@@ -172,6 +214,7 @@ Vector3 Player::GetWorldPosition()
 
 Player::~Player() 
 { 
+	delete sprite2DReticle_;
 	for (PlayerBullet* bullet : bullets_) 
 	{
 		delete bullet;
@@ -183,4 +226,9 @@ void Player::OnCollision() {}
 void Player::SetParent(const WorldTransform* parent) 
 {
 	worldTransform_.parent_ = parent; 
+}
+
+void Player::DrawUI() 
+{
+	sprite2DReticle_->Draw(); 
 }

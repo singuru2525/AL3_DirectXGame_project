@@ -1,5 +1,6 @@
 ﻿#include "Matrix4x4.h"
 #include <cmath>
+#include <assert.h>
 
 Matrix4x4 Scale(const Vector3& scale) {
 	Matrix4x4 result;
@@ -95,6 +96,41 @@ float Length(const Vector3& v)
 }
 
 
+// ビューポート変換行列
+Matrix4x4 MakeViewportMatrix(float left, float top, float width, float height, float minDepth, float maxDepth) 
+{
+	Matrix4x4 result;
+	result = 
+	{
+	    width / 2,        0.0f,             0.0f,                0.0f,
+	    0.0f,             -height / 2,      0.0f,                0.0f,
+	    0.0f,             0.0f,             maxDepth - minDepth, 0.0f,
+	    width / 2 + left, height / 2 + top, minDepth,            1.0f
+	};
+
+	return result;
+}
+
+
+// 座標変換
+Vector3 Transform(const Vector3& vector, const Matrix4x4& matrix)
+{
+	Vector3 result;
+	result.x = vector.x * matrix.m[0][0] + vector.y * matrix.m[1][0] + vector.z * matrix.m[2][0] +
+	           1.0f * matrix.m[3][0];
+	result.y = vector.x * matrix.m[0][1] + vector.y * matrix.m[1][1] + vector.z * matrix.m[2][1] +
+	           1.0f * matrix.m[3][1];
+	result.z = vector.x * matrix.m[0][2] + vector.y * matrix.m[1][2] + vector.z * matrix.m[2][2] +
+	           1.0f * matrix.m[3][2];
+	float w = vector.x * matrix.m[0][3] + vector.y * matrix.m[1][3] + vector.z * matrix.m[2][3] +
+	          1.0f * matrix.m[3][3];
+	result.x /= w;
+	result.y /= w;
+	result.z /= w;
+	return result;
+}
+
+
 // 代入演算子
 Matrix4x4& operator*=(Matrix4x4& m1, const Matrix4x4& m2) {
 	Matrix4x4 result = {};
@@ -128,7 +164,7 @@ Vector3& operator*=(Vector3& v, float s)
 	return v;
 }
 
-const Vector3& operator*(const Vector3& v, float s)
+const Vector3 operator*(const Vector3& v, float s)
 {
 	Vector3 tmp(v);
 	return tmp *= s;
