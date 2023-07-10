@@ -34,6 +34,11 @@ Matrix4x4 MakeViewportMatrix(float left, float top, float width, float height, f
 
 Vector3 Transform(const Vector3& vector, const Matrix4x4& matrix);
 
+
+// 線形補間(Linear Interpolation)
+Vector3 Lerp(const Vector3& v1, const Vector3& v2, float t);
+
+
 // 代入演算子
 Matrix4x4& operator*=(Matrix4x4& m1, const Matrix4x4& m2);
 
@@ -43,12 +48,13 @@ Matrix4x4 operator*(const Matrix4x4& m1, const Matrix4x4& m2);
 
 Vector3& operator*=(Vector3& v, float s);
 
-
 const Vector3 operator*(const Vector3& v, float s);
+
 
 Vector3& operator-=(Vector3& v1, const Vector3& v2);
 
 const Vector3 operator-(const Vector3& v1, const Vector3& v2);
+
 
 Vector3& operator+=(Vector3& v1, const Vector3& v2);
 

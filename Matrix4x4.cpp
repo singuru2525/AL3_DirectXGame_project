@@ -131,6 +131,21 @@ Vector3 Transform(const Vector3& vector, const Matrix4x4& matrix)
 }
 
 
+Vector3 Lerp(const Vector3& v1, const Vector3& v2, float t) 
+{ 
+	Vector3 temp;
+
+	temp = 
+	{
+	    temp.x = (1.0f - t) * v1.x + t * v2.x,
+		temp.y = (1.0f - t) * v1.y + t * v2.y,
+	    temp.z = (1.0f - t) * v1.z + t * v2.z
+	};
+
+	return temp;
+}
+
+
 // 代入演算子
 Matrix4x4& operator*=(Matrix4x4& m1, const Matrix4x4& m2) {
 	Matrix4x4 result = {};
@@ -201,3 +216,4 @@ const Vector3 operator+(const Vector3& v1, const Vector3& v2)
 	Vector3 tmp(v1);
 	return tmp += v2;
 }
+

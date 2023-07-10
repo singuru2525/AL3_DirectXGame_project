@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include "Model.h"
 #include "Vector3.h"
+#include "Player.h"
 #include "ViewProjection.h"
 #include "WorldTransform.h"
 
@@ -45,6 +46,7 @@ public:
 
 	const float GetRadius() { return radius_; }
 
+	void SetPlayer(Player* player) { player_ = player; }
 
 private:
 
@@ -69,5 +71,6 @@ private:
 	// デスフラグ
 	bool isDead_ = false;
 
+	Player* player_ = nullptr;
 
 };
