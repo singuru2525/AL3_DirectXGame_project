@@ -1,5 +1,7 @@
 ﻿#include "EnemyBullet.h"
 #include <cassert>
+#include <cmath>
+#include <iostream>
 
 void EnemyBullet::Initialize(Model* model, const Vector3& position, const Vector3& Velocity) 
 {
@@ -8,6 +10,21 @@ void EnemyBullet::Initialize(Model* model, const Vector3& position, const Vector
 	model_ = model;
 
 	velocity_ = Velocity;
+
+	// 大きさ変更
+	worldTransform_.scale_.x = 0.5f;
+	worldTransform_.scale_.y = 0.5f;
+	worldTransform_.scale_.z = 3.0f;
+
+	// Y軸周り角度
+	worldTransform_.rotation_.y = std::atan2(velocity_.x, velocity_.z);
+
+	// お祈り
+	worldTransform_.translation_ = worldTransform_.rotation_;
+
+	// X軸周り角度
+	worldTransform_.rotation_.x = std::atan2(velocity_.y, velocity_.z);
+
 
 	// テクスチャ読み込み
 	textureHandle_ = TextureManager::Load("white1x1.png");

@@ -28,7 +28,7 @@ Matrix4x4 MakeAffineMatrix(const Vector3& scale, const Vector3& rot, const Vecto
 // 正規化
 Vector3 Normalize(const Vector3& v);
 
-float Length(Vector3 v);
+float Length(const Vector3& v);
 
 Matrix4x4 MakeViewportMatrix(float left, float top, float width, float height, float minDepth, float maxDepth);
 
