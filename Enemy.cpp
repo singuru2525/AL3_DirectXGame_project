@@ -132,7 +132,19 @@ Vector3 Enemy::GetWorldPosition() {
 	return worldPos;
 }
 
-void Enemy::OnCollision() {}
+void Enemy::OnCollision() 
+{
+
+}
+
+void Enemy::ResetFire() 
+{ 
+	Fire();
+
+	timedCalls_.push_back (
+		new TimedCall(std::bind(&Enemy::ResetFire, this), 60.0f));
+
+}
 
 
 // デストラクタ

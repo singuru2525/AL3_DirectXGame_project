@@ -6,6 +6,7 @@
 #include "MathUtility.h"
 #include <list>
 #include "EnemyBullet.h"
+#include "TimedCall.h"
 
 enum class Phase {
 	Approach, // 接近する
@@ -80,6 +81,12 @@ public:
 
 	void SetGameScene(GameScene* gameScene) { gameScene_ = gameScene; }
 
+
+	/// <summary>
+	/// 弾を発射し、タイマーをリセットするコールバック関数
+	/// </summary>
+	void ResetFire();
+
 private:
 
 	// ワールド変換データ
@@ -106,5 +113,8 @@ private:
 	Player* player_ = nullptr;
 
 	GameScene* gameScene_ = nullptr;
+
+	// 時限発動のリスト
+	std::list<TimedCall*> timedCalls_;
 
 };

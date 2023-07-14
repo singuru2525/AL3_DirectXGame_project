@@ -38,27 +38,25 @@ void EnemyBullet::Initialize(Model* model, const Vector3& position, const Vector
 void EnemyBullet::Update() 
 {
 
-	// 敵弾から自キャラへのベクトルを計算
-	Vector3 toPlayer = player_->GetWorldPosition() - worldTransform_.translation_;
+	//// 敵弾から自キャラへのベクトルを計算
+	//Vector3 toPlayer = player_->GetWorldPosition() - worldTransform_.translation_;
 
-	SetPlayer(player_);
+	//// ベクトルを正規化
+	//Normalize(toPlayer);
 
-	// ベクトルを正規化
-	Normalize(toPlayer);
+	//Normalize(velocity_);
 
-	Normalize(velocity_);
+	//float t = 0.5f; 
 
-	float t = 0.5f; 
+	//float speed = 5.0f;
 
-	float speed = 5.0f;
+	//velocity_ = Lerp(velocity_, toPlayer, t) * speed;
 
-	velocity_ = Lerp(velocity_, toPlayer, t) * speed;
+	//// Y軸周り角度
+	//worldTransform_.rotation_.y = std::atan2(velocity_.x, velocity_.z);
 
-	// Y軸周り角度
-	worldTransform_.rotation_.y = std::atan2(velocity_.x, velocity_.z);
-
-	// X軸周り角度
-	worldTransform_.rotation_.x = std::atan2(velocity_.y, velocity_.z);
+	//// X軸周り角度
+	//worldTransform_.rotation_.x = std::atan2(velocity_.y, velocity_.z);
 
 	worldTransform_.translation_.x += velocity_.x;
 	worldTransform_.translation_.y += velocity_.y;
@@ -96,3 +94,4 @@ void EnemyBullet::OnCollision()
 {
 	isDead_ = true; 
 }
+
