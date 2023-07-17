@@ -47,8 +47,20 @@ void Enemy::Update()
 		break;
 	}
 
+	timedCalls_.remove_if([](TimedCall* time)
+	{
+		if (time->IsFinished()) {
+			delete time;
 
+			return true;
+		}
+		return false;
+	});
 
+	for (TimedCall* timeCalls : timedCalls_) 
+	{
+		timeCalls->Update();
+	}
 	
 	worldTransform_.UpdateMatrix();
 
@@ -63,18 +75,19 @@ void Enemy::Draw(const ViewProjection& viewProjection) {
 // 敵の接近
 void Enemy::EnemyApproach() 
 {
+
 	float approachSpeed = 0.2f;
 	worldTransform_.translation_.z -= approachSpeed;
 
 	--fireTimer_; 
 
-	if (fireTimer_ <= 0) 
-	{
-		// 弾を発射
-		Fire();
-		// 発射タイマーを初期化
-		fireTimer_ = kFireInterval;
-	}
+	//if (fireTimer_ <= 0) 
+	//{
+	//	// 弾を発射
+	//	Fire();
+	//	// 発射タイマーを初期化
+	//	fireTimer_ = kFireInterval;
+	//}
 }
  
 // 敵の離脱
@@ -83,6 +96,8 @@ void Enemy::EnemyLeave()
 	float leaveSpeed = 0.2f;
 	worldTransform_.translation_.x += leaveSpeed;
 
+	timedCalls_.clear();
+
 }
 
 // 接近フェーズの初期化
@@ -90,6 +105,8 @@ void Enemy::ApproachInitialize()
 {
 	// 発射タイマーを初期化
 	fireTimer_ = kFireInterval;
+
+	timedCalls_.push_back(new TimedCall(std::bind(&Enemy::ResetFire, this), fireTimer_));
 }
 
 // 弾の発射関数
@@ -142,7 +159,7 @@ void Enemy::ResetFire()
 	Fire();
 
 	timedCalls_.push_back (
-		new TimedCall(std::bind(&Enemy::ResetFire, this), 60.0f));
+		new TimedCall(std::bind(&Enemy::ResetFire, this), kFireInterval));
 
 }
 
@@ -150,5 +167,7 @@ void Enemy::ResetFire()
 // デストラクタ
 Enemy::~Enemy()
 {
-	
+	for (TimedCall* timedCalls : timedCalls_) {
+		delete timedCalls;
+	}
 }

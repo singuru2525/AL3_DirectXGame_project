@@ -67,7 +67,7 @@ public:
 	~Enemy();
 
 	// 発射間隔
-	static const int kFireInterval = 30;
+	static const int kFireInterval = 60;
 
 	// 接近フェーズ初期化
 	void ApproachInitialize();

@@ -17,6 +17,6 @@ void TimedCall::Update()
 	{
 		isFinished_ = true;
 
-		std::function<void(void)> f_();
+		f_();
 	}
 }
