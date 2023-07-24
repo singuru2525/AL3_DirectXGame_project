@@ -8,6 +8,11 @@ void PlayerBullet::Initialize(Model* model, const Vector3& position, const Vecto
 
 	velocity_ = Velocity;
 
+	// 衝突属性を設定
+	SetCollisionAttribute(kCollisionAttributePlayer);
+	// 衝突対象を自分の属性以外に設定
+	SetCollisionMask(kCollisionAttributeEnemy);
+
 	// テクスチャ読み込み
 	textureHandle_ = TextureManager::Load("cube/cube.jpg");
 

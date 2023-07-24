@@ -17,6 +17,11 @@ void Player::Initialize(Model* model, uint32_t textureHandle, Vector3 playerPosi
 
 	worldTransform3DReticle_.Initialize();
 
+	// 衝突属性を設定
+	SetCollisionAttribute(kCollisionAttributePlayer);
+	// 衝突対象を自分の属性以外に設定
+	SetCollisionMask(kCollisionAttributeEnemy);
+
 	// レティクル用テクスチャ取得
 	uint32_t textureReticle = TextureManager::Load("target.png");
 

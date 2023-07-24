@@ -11,6 +11,11 @@ void EnemyBullet::Initialize(Model* model, const Vector3& position, const Vector
 
 	velocity_ = Velocity;
 
+	// 衝突属性を設定
+	SetCollisionAttribute(kCollisionAttributeEnemy);
+	// 衝突対象を自分の属性以外に設定
+	SetCollisionMask(kCollisionAttributePlayer);
+
 	// 大きさ変更
 	worldTransform_.scale_.x = 0.5f;
 	worldTransform_.scale_.y = 0.5f;
