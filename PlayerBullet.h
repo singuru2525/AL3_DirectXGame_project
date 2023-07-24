@@ -3,11 +3,13 @@
 #include "Vector3.h"
 #include "ViewProjection.h"
 #include "WorldTransform.h"
+#include "Collider.h"
 
 /// <summary>
 /// 自キャラの弾
 /// </summary>
-class PlayerBullet {
+class PlayerBullet : public Collider
+{
 
 public:
 	/// <summary>
@@ -32,11 +34,10 @@ public:
 	bool IsDead() const { return isDead_; }
 
 	// Getter
-	Vector3 GetWorldPosition();
-
+	Vector3 GetWorldPosition() override;
 
 	// 衝突を検知したら呼び出されるコールバック関数
-	void OnCollision();
+	void OnCollision() override;
 
 	const float radius_ = 1.0f;
 

@@ -7,6 +7,7 @@
 #include <list>
 #include "EnemyBullet.h"
 #include "TimedCall.h"
+#include "Collider.h"
 
 enum class Phase {
 	Approach, // 接近する
@@ -20,8 +21,8 @@ class GameScene;
 /// <summary>
 /// 敵
 /// </summary>
-class Enemy {
-
+class Enemy : public Collider
+{
 public:
 
 	/// <summary>
@@ -59,7 +60,7 @@ public:
 	void Fire();
 
 	// Getter
-	Vector3 GetWorldPosition();
+	Vector3 GetWorldPosition() override;
 
 	/// <summary>
 	/// デストラクタ
@@ -73,7 +74,7 @@ public:
 	void ApproachInitialize();
 
 	// 衝突を検知したら呼び出されるコールバック関数
-	void OnCollision();
+	void OnCollision() override;
 
 	const float radius_ = 1.0f;
 

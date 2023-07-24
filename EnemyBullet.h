@@ -4,12 +4,13 @@
 #include "Player.h"
 #include "ViewProjection.h"
 #include "WorldTransform.h"
+#include "Collider.h"
 
 /// <summary>
 /// 敵の弾
 /// </summary>
-class EnemyBullet {
-
+class EnemyBullet : public Collider
+{
 public:
 	/// <summary>
 	/// 初期化
@@ -37,10 +38,10 @@ public:
 	bool IsDead() const { return isDead_; }
 
 	// Getter
-	Vector3 GetWorldPosition();
+	Vector3 GetWorldPosition() override;
 
 	// 衝突を検知したら呼び出されるコールバック関数
-	void OnCollision();
+	void OnCollision() override;
 
 	const float radius_ = 1.0f;
 

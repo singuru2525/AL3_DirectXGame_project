@@ -8,13 +8,14 @@
 #include "PlayerBullet.h"
 #include "MathUtility.h"
 #include "Sprite.h"
+#include "Collider.h"
 #include <list>
 
 
 /// <summary>
 /// 自キャラ
 /// </summary>
-class Player 
+class Player : public Collider
 {
 public:
 	/// <summary>
@@ -38,8 +39,11 @@ public:
 
 	void Attack();
 
+	// 衝突を検知したら呼び出されるコールバック関数
+	void OnCollision() override;
+
 	// Getter
-	Vector3 GetWorldPosition();
+	Vector3 GetWorldPosition() override;
 
 	const float radius_ = 1.0f;
 
@@ -53,8 +57,7 @@ public:
 	/// </summary>
 	~Player();
 
-	// 衝突を検知したら呼び出されるコールバック関数
-	void OnCollision();
+
 
 	/// <summary>
 	/// 親となるワールドトランスフォームをセット
