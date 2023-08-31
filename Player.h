@@ -68,6 +68,12 @@ public:
 	/// </summary>
 	void DrawUI();
 
+	// 撃破消滅
+	bool IsDead() const { return isDead_; }
+
+	// デスフラグ
+	bool isDead_ = false;
+
 private:
 	// ワールド変換データ
 	WorldTransform worldTransform_;

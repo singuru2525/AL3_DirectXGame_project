@@ -11,6 +11,7 @@ void PlayerBullet::Initialize(Model* model, const Vector3& position, const Vecto
 	// テクスチャ読み込み
 	textureHandle_ = TextureManager::Load("cube/cube.jpg");
 
+
 	worldTransform_.Initialize();
 
 	// 引数で受け取った初期値をセット

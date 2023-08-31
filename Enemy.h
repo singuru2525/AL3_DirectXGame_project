@@ -80,6 +80,9 @@ public:
 
 	void SetGameScene(GameScene* gameScene) { gameScene_ = gameScene; }
 
+	//撃破消滅
+	bool IsDead() const { return isDead_; }
+
 private:
 
 	// ワールド変換データ
@@ -106,5 +109,8 @@ private:
 	Player* player_ = nullptr;
 
 	GameScene* gameScene_ = nullptr;
+
+	// デスフラグ
+	bool isDead_ = false;
 
 };

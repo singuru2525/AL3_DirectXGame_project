@@ -30,7 +30,6 @@ void Enemy::Update()
 {
 
 	
-
 	switch (phase_) {
 	case Phase::Approach:
 		// 移動
@@ -132,7 +131,10 @@ Vector3 Enemy::GetWorldPosition() {
 	return worldPos;
 }
 
-void Enemy::OnCollision() {}
+void Enemy::OnCollision() 
+{
+	isDead_ = true; 
+}
 
 
 // デストラクタ

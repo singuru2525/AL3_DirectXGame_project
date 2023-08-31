@@ -28,22 +28,23 @@ void GameScene::Initialize() {
 	input_ = Input::GetInstance();
 	audio_ = Audio::GetInstance();
 
-	textureHandle_ = TextureManager::Load("sample.png");
+	// テクスチャ
+	textureHandle_ = TextureManager::Load("player.png");
+	TitleHandle_ = TextureManager::Load("Title.png");
+	ClearHandle_ = TextureManager::Load("Clear.png");
+	GameOverHandle_ = TextureManager::Load("GameOver.png");
+	ManualHandle_ = TextureManager::Load("Manual.png");
 	TextureManager::Load("target.png");
+
+	// スプライト
+	spriteTitle_ = Sprite::Create(TitleHandle_, {640, 360}, {1, 1, 1, 1}, {0.5f, 0.5f});
+	spriteClear_ = Sprite::Create(ClearHandle_, {640, 360}, {1, 1, 1, 1}, {0.5f, 0.5f});
+	spriteGameOver_ = Sprite::Create(GameOverHandle_, {640, 360}, {1, 1, 1, 1}, {0.5f, 0.5f});
+	spriteManual_ = Sprite::Create(ManualHandle_, {640, 360}, {1, 1, 1, 1}, {0.5f, 0.5f});
 
 	model_ = Model::Create();
 
 	viewProjection_.Initialize();
-
-	// 自キャラの生成
-	player_ = new Player();
-	// 自キャラの初期化
-	Vector3 playerPosition(0, 0, 20);
-
-	player_->Initialize(model_,textureHandle_,playerPosition);
-
-	
-
 
 	// 天球
 	skydome_ = new Skydome();
@@ -52,84 +53,205 @@ void GameScene::Initialize() {
 
 	skydome_->Initialize(modelSkydome_);
 
+	// 自キャラの生成
+	player_ = new Player();
+	// 自キャラの初期化
+	Vector3 playerPosition(0, 0, 20);
+
+	player_->Initialize(model_, textureHandle_, playerPosition);
+
 
 	// レールカメラ
 	railCamera_ = new RailCamera();
 
-	railCamera_->Initialize(worldTransform_.translation_,worldTransform_.rotation_);
-
+	railCamera_->Initialize(worldTransform_.translation_, worldTransform_.rotation_);
 
 	// 自キャラとレールカメラの親子関係を結ぶ
 	player_->SetParent(&railCamera_->GetWorldTransform());
 
-	//デバックカメラの生成
+	// デバックカメラの生成
 	debugCamera_ = new DebugCamera(WinApp::kWindowWidth, WinApp::kWindowHeight);
 
-	//軸方向の表示を有効にする
-	AxisIndicator::GetInstance()->SetVisible(true);
-	//軸方向表示が参照するビュープロジェクションを指定する (アドレス渡し)
-	AxisIndicator::GetInstance()->SetTargetViewProjection(&viewProjection_);
+	//// 軸方向の表示を有効にする
+	//AxisIndicator::GetInstance()->SetVisible(true);
+	//// 軸方向表示が参照するビュープロジェクションを指定する (アドレス渡し)
+	//AxisIndicator::GetInstance()->SetTargetViewProjection(&viewProjection_);
 
-	AddEnemy({10.f,5.f,100.f});
+	AddEnemy({10.f, 5.f, 100.f});
 	LoadEnemyPopData();
+	
 }
 
 void GameScene::Update() 
 {
-	// 自キャラの更新
-	player_->Update(viewProjection_);
-
-	// 敵の更新
-	for (Enemy* enemy : enemy_) {
-		enemy->Update();
-	}
-
-	// 天球
-	skydome_->Update();
-
-	// レールカメラ
-	railCamera_->Update();
-
-	//デバックカメラの更新
-	debugCamera_->Update();
-
-	bullets_.remove_if([](EnemyBullet* bullet) {
-		if (bullet->IsDead()) {
-			delete bullet;
-			return true;
-		}
-		return false;
-	});
-
-	// 弾の更新呼び出し
-	for (EnemyBullet* bullet : bullets_) {
-		bullet->Update();
-	}
-
-	UpdateEnemyPopCommands();
-
-	// 0を入力するとデバックカメラが動く
-//  #ifdef _DEBUG
-	if (input_->TriggerKey(DIK_0)) {
-		isDebugCameraActive_ = 1;
-	}
-//#endif // _DEBUG
-
-	// カメラの処理
-	if (isDebugCameraActive_) {
-		debugCamera_->Update();
-		viewProjection_.matView = debugCamera_->GetViewProjection().matView;              //デバックカメラのビュー行列
-		viewProjection_.matProjection = debugCamera_->GetViewProjection().matProjection;  //デバックカメラのプロジェクション行列
-		//ビュープロジェクション行列の転送
-		viewProjection_.TransferMatrix();
-	} else if (!isDebugCameraActive_)
+	// タイトル
+	if (scene == 0) 
 	{
-		//ビュープロジェクション行列の更新と転送
-		viewProjection_.matView = railCamera_->GetViewProjection().matView;              //デバックカメラのビュー行列
-		viewProjection_.matProjection = railCamera_->GetViewProjection().matProjection;  //デバックカメラのプロジェクション行列
-		viewProjection_.TransferMatrix();
+		Initialize();
+
+		if (input_->TriggerKey(DIK_RETURN)) 
+		{
+			scene = 4;
+		}
+
+		// ゲームパッド操作
+		XINPUT_STATE joyState;
+
+		// ゲームパッド未接続なら何もせず抜ける
+		if (!Input::GetInstance()->GetJoystickState(0, joyState)) {
+			return;
+		}
+
+		// Aトリガーを押したら
+		if (joyState.Gamepad.wButtons & XINPUT_GAMEPAD_A) 
+		{
+			scene = 4;
+		}
 	}
-	CheckAllCollisions();
+
+	
+	// ゲーム画面
+	if (scene == 1) 
+	{
+
+		// 自キャラの更新
+		player_->Update(viewProjection_);
+
+		// 敵の更新
+		for (Enemy* enemy : enemy_) {
+			enemy->Update();
+		}
+
+		// 天球
+		skydome_->Update();
+
+		// レールカメラ
+		railCamera_->Update();
+
+		// デバックカメラの更新
+		debugCamera_->Update();
+		
+
+		bullets_.remove_if([](EnemyBullet* bullet) {
+			if (bullet->IsDead()) {
+				delete bullet;
+				return true;
+			}
+			return false;
+		});
+
+		enemy_.remove_if([](Enemy* enemy) {
+			if (enemy->IsDead()) {
+				delete enemy;
+				return true;
+			}
+			return false;
+		});
+
+		// 弾の更新呼び出し
+		for (EnemyBullet* bullet : bullets_) {
+			bullet->Update();
+		}
+
+		UpdateEnemyPopCommands();
+
+		// 0を入力するとデバックカメラが動く
+		 #ifdef _DEBUG
+		if (input_->TriggerKey(DIK_0)) {
+			isDebugCameraActive_ = 1;
+		}
+		 #endif  _DEBUG
+
+		// カメラの処理
+		if (isDebugCameraActive_) {
+			debugCamera_->Update();
+			viewProjection_.matView =
+			    debugCamera_->GetViewProjection().matView; // デバックカメラのビュー行列
+			viewProjection_.matProjection =
+			    debugCamera_->GetViewProjection()
+			        .matProjection; // デバックカメラのプロジェクション行列
+			// ビュープロジェクション行列の転送
+			viewProjection_.TransferMatrix();
+		} else if (!isDebugCameraActive_) {
+			// ビュープロジェクション行列の更新と転送
+			viewProjection_.matView =
+			    railCamera_->GetViewProjection().matView; // デバックカメラのビュー行列
+			viewProjection_.matProjection =
+			    railCamera_->GetViewProjection()
+			        .matProjection; // デバックカメラのプロジェクション行列
+			viewProjection_.TransferMatrix();
+		}
+		CheckAllCollisions();
+
+		if (player_->isDead_== true) 
+		{
+			scene = 3;
+		}
+	}
+
+	// ゲームクリア
+	if (scene == 2) {
+
+		if (input_->TriggerKey(DIK_RETURN)) {
+			scene = 0;
+		}
+
+		// ゲームパッド操作
+		XINPUT_STATE joyState;
+
+		// ゲームパッド未接続なら何もせず抜ける
+		if (!Input::GetInstance()->GetJoystickState(0, joyState)) {
+			return;
+		}
+
+		// Aトリガーを押したら
+		if (joyState.Gamepad.wButtons & XINPUT_GAMEPAD_A) {
+			scene = 0;
+		}
+	}
+	
+	// ゲームオーバー
+	if (scene == 3) 
+	{
+
+		if (input_->TriggerKey(DIK_RETURN)) {
+			scene = 0;
+		}
+
+		// ゲームパッド操作
+		XINPUT_STATE joyState;
+
+		// ゲームパッド未接続なら何もせず抜ける
+		if (!Input::GetInstance()->GetJoystickState(0, joyState)) {
+			return;
+		}
+
+		// Aトリガーを押したら
+		if (joyState.Gamepad.wButtons & XINPUT_GAMEPAD_B) {
+			scene = 0;
+		}
+	}
+
+	// 説明
+	if (scene == 4) 
+	{
+		if (input_->TriggerKey(DIK_RETURN)) {
+			scene = 1;
+		}
+
+		// ゲームパッド操作
+		XINPUT_STATE joyState;
+
+		// ゲームパッド未接続なら何もせず抜ける
+		if (!Input::GetInstance()->GetJoystickState(0, joyState)) {
+			return;
+		}
+
+		// Aトリガーを押したら
+		if (joyState.Gamepad.wButtons & XINPUT_GAMEPAD_A) {
+			scene = 1;
+		}
+	}
 }
 
 void GameScene::Draw() {
@@ -158,21 +280,28 @@ void GameScene::Draw() {
 	/// <summary>
 	/// ここに3Dオブジェクトの描画処理を追加できる
 	/// </summary>
-	/// 
-	// 自キャラの描画
-	player_->Draw(viewProjection_);
 
 	skydome_->Draw(viewProjection_);
 
-	// 敵の描画
-	for (Enemy* enemy : enemy_) {
-		enemy->Draw(viewProjection_);
+
+	if (scene == 1) 
+	{
+		// 自キャラの描画
+		player_->Draw(viewProjection_);
+
+
+		// 敵の描画
+		for (Enemy* enemy : enemy_) {
+			enemy->Draw(viewProjection_);
+		}
+
+		// 弾の描画呼び出し
+		for (EnemyBullet* bullet : bullets_) {
+			bullet->Draw(viewProjection_);
+		}
 	}
 
-	// 弾の描画呼び出し
-	for (EnemyBullet* bullet : bullets_) {
-		bullet->Draw(viewProjection_);
-	}
+	
 
 	// 3Dオブジェクト描画後処理
 	Model::PostDraw();
@@ -183,7 +312,30 @@ void GameScene::Draw() {
 	// 前景スプライト描画前処理
 	Sprite::PreDraw(commandList);
 
-	player_->DrawUI();
+	if (scene == 0) 
+	{
+		spriteTitle_->Draw();
+	}
+
+	if (scene == 1) 
+	{
+		player_->DrawUI();
+	}
+
+	if (scene == 2) 
+	{
+		spriteClear_->Draw();
+	}
+
+	if (scene == 3) 
+	{
+		spriteGameOver_->Draw();
+	}
+
+	if (scene == 4) 
+	{
+		spriteManual_->Draw();
+	}
 	/// <summary>
 	/// ここに前景スプライトの描画処理を追加できる
 	/// </summary>
@@ -377,6 +529,10 @@ void GameScene::UpdateEnemyPopCommands()
 
 			 // コマンドループを抜ける
 			 break;
+		} 
+		else if (word.find("END") == 0) 
+		{
+			 scene = 2;
 		}
 
 	}

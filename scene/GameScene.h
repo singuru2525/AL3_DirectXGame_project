@@ -88,11 +88,25 @@ private: // メンバ変数
 	/// ゲームシーン用
 	/// </summary>
 	
+	int scene = 0;
+
 	// ワールド変換データ
 	WorldTransform worldTransform_;
 
 	// テクスチャハンドル
 	uint32_t textureHandle_ = 0;
+
+	uint32_t TitleHandle_ = 0u;
+	Sprite* spriteTitle_ = nullptr; 
+
+	uint32_t GameOverHandle_ = 0u;
+	Sprite* spriteGameOver_ = nullptr; 
+
+	uint32_t ClearHandle_ = 0u;
+	Sprite* spriteClear_ = nullptr; 
+
+	uint32_t ManualHandle_ = 0u;
+	Sprite* spriteManual_ = nullptr; 
 
 	// 3Dモデル
 	Model* model_ = nullptr;

@@ -34,6 +34,8 @@ void Player::Initialize(Model* model, uint32_t textureHandle, Vector3 playerPosi
 void Player::Update(ViewProjection &viewProjection)
 {
 
+
+
 	bullets_.remove_if([](PlayerBullet* bullet) {
 
 		if (bullet->IsDead()) 
@@ -133,21 +135,7 @@ void Player::Update(ViewProjection &viewProjection)
 		move.y -= kCharacterSpeed;
 	}
 
-	//範囲制限
-	const float kMobeLimitX = 35.0f;
-	const float kMobeLimitY = 35.0f;
-
-	//範囲を超えない処理
-	worldTransform_.translation_.x = max(worldTransform_.translation_.x, -kMobeLimitX);
-	worldTransform_.translation_.x = min(worldTransform_.translation_.x, +kMobeLimitX);
-	worldTransform_.translation_.y = max(worldTransform_.translation_.y, -kMobeLimitY);
-	worldTransform_.translation_.y = min(worldTransform_.translation_.y, +kMobeLimitY);
-
-	// 座標移動
-	worldTransform_.translation_.x += move.x;
-	worldTransform_.translation_.y += move.y;
-	worldTransform_.translation_.z += move.z;
-
+	
 	worldTransform_.UpdateMatrix();
 
 	// ゲームパッド操作
@@ -160,29 +148,44 @@ void Player::Update(ViewProjection &viewProjection)
 		move.y += (float)joyState.Gamepad.sThumbLY / SHRT_MAX * kCharacterSpeed;
 	}
 
+	// 範囲制限
+	const float kMobeLimitX = 35.0f;
+	const float kMobeLimitY = 35.0f;
+
+	// 範囲を超えない処理
+	worldTransform_.translation_.x = max(worldTransform_.translation_.x, -kMobeLimitX);
+	worldTransform_.translation_.x = min(worldTransform_.translation_.x, +kMobeLimitX);
+	worldTransform_.translation_.y = max(worldTransform_.translation_.y, -kMobeLimitY);
+	worldTransform_.translation_.y = min(worldTransform_.translation_.y, +kMobeLimitY);
+
+	// 座標移動
+	worldTransform_.translation_.x += move.x;
+	worldTransform_.translation_.y += move.y;
+	worldTransform_.translation_.z += move.z;
+
 	// スプライトの現在座標を取得
 	Vector2 spritePosition = sprite2DReticle_->GetPosition();
 
 	
 
 
-	//ImGui
-	ImGui::SetNextWindowPos({0,0});
-	ImGui::SetNextWindowSize({300, 200});
+	////ImGui
+	//ImGui::SetNextWindowPos({0,0});
+	//ImGui::SetNextWindowSize({300, 200});
 
-	ImGui::Begin("Player");
-	float silderValue[3] = {
-	    worldTransform_.translation_.x, worldTransform_.translation_.y,
-	    worldTransform_.translation_.z};
-	ImGui::SliderFloat3("position", silderValue, -20.0f, 20.0f);
-	worldTransform_.translation_ = {silderValue[0], silderValue[1], silderValue[2]};
+	//ImGui::Begin("Player");
+	//float silderValue[3] = {
+	//    worldTransform_.translation_.x, worldTransform_.translation_.y,
+	//    worldTransform_.translation_.z};
+	//ImGui::SliderFloat3("position", silderValue, -20.0f, 20.0f);
+	//worldTransform_.translation_ = {silderValue[0], silderValue[1], silderValue[2]};
 
-	ImGui::Text("2DReticle:(%f,%f)", mousePosition.x, mousePosition.y);
-	ImGui::Text("Near:(%+.2f,%+.2f,%+.2f)", posNear.x, posNear.y, posNear.z);
-	ImGui::Text("Far:(%+.2f,%+.2f,%+.2f)", posFar.x, posFar.y, posFar.z);
-	ImGui::Text("3DReticle:(%+.2f,%+.2f,%+.2f)", worldTransform3DReticle_.translation_.x,
-	    worldTransform3DReticle_.translation_.y, worldTransform3DReticle_.translation_.z);
-	ImGui::End();
+	//ImGui::Text("2DReticle:(%f,%f)", mousePosition.x, mousePosition.y);
+	//ImGui::Text("Near:(%+.2f,%+.2f,%+.2f)", posNear.x, posNear.y, posNear.z);
+	//ImGui::Text("Far:(%+.2f,%+.2f,%+.2f)", posFar.x, posFar.y, posFar.z);
+	//ImGui::Text("3DReticle:(%+.2f,%+.2f,%+.2f)", worldTransform3DReticle_.translation_.x,
+	//    worldTransform3DReticle_.translation_.y, worldTransform3DReticle_.translation_.z);
+	//ImGui::End();
 
 
 	Rotate();
@@ -226,7 +229,7 @@ void Player::Rotate()
 void Player::Attack() 
 {
 
-	if (input_->TriggerKey(DIK_SPACE)) 
+	if (input_->IsPressMouse(0)) 
 	{
 		
 		const float kBulletSpeed = 1.0f;
@@ -295,7 +298,10 @@ Player::~Player()
 	}
 }
 
-void Player::OnCollision() {}
+void Player::OnCollision() 
+{
+	isDead_ = true; 
+}
 
 void Player::SetParent(const WorldTransform* parent) 
 {
